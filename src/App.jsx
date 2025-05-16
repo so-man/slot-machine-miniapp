@@ -10,7 +10,7 @@ import Leaderboard from './Leaderboard';
 
 const symbols = ['🍒', '🍋', '🍊', '🍇', '🔔', '7️⃣'];
 
-export default function App() {
+export default function App( 🪙</div> {
   const [telegramUser, setTelegramUser] = useState(null);
   const [grid, setGrid] = useState(Array.from({ length: 3 }, () => Array(3).fill('❔')));
   const [spinning, setSpinning] = useState(false);
@@ -171,11 +171,7 @@ export default function App() {
           element={
             <div className="container">
               <h1>🎰 Spinfinity</h1>
-              {telegramUser && (
-                <div className="balance">
-                  Hi {telegramUser.first_name}, Balance: {balance} 🪙
-                </div>
-              )}
+              {telegramUser && <div className="balance">Balance: }
               <div className="bet-row">
                 <input type="number" value={bet} min="1" onChange={(e) => setBet(e.target.value)} disabled={spinning} />
                 <button onClick={spin} disabled={spinning}>
