@@ -14,22 +14,23 @@ body {
   text-align: center;
 }
 
-h1 {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-}
-
-.slot-box {
+.grid-box {
   display: flex;
-  justify-content: center;
-  gap: 20px;
+  flex-direction: column;
+  gap: 10px;
   margin: 30px 0;
 }
 
+.row {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
 .slot {
-  font-size: 5rem;
-  width: 80px;
-  height: 80px;
+  font-size: 3rem;
+  width: 70px;
+  height: 70px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -46,8 +47,8 @@ h1 {
 }
 
 @keyframes blurSpin {
-  0%   { transform: scale(1) rotate(0deg); }
-  50%  { transform: scale(1.05) rotate(5deg); }
+  0% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.05) rotate(5deg); }
   100% { transform: scale(1) rotate(-5deg); }
 }
 
