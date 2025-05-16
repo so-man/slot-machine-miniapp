@@ -1,19 +1,60 @@
+/* Background Layer */
 body {
-  background-color: #000;
-  color: white;
-  font-family: 'Segoe UI', sans-serif;
   margin: 0;
   padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  font-family: 'Segoe UI', sans-serif;
+  color: white;
+  background: url('/casino-bg.png') no-repeat center center fixed;
+  background-size: cover;
+  overflow: hidden;
+  position: relative;
   height: 100vh;
 }
 
-.container {
-  text-align: center;
+/* Animated Floating Icons */
+body::before {
+  content: '🪙💸💰🤑🪙💸🪙🪙🪙';
+  position: absolute;
+  top: -10%;
+  left: 0;
+  width: 100%;
+  height: 200%;
+  font-size: 2rem;
+  opacity: 0.05;
+  white-space: nowrap;
+  animation: cryptoRain 20s linear infinite;
+  pointer-events: none;
 }
 
+@keyframes cryptoRain {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+/* Container Styling */
+.container {
+  position: relative;
+  z-index: 2;
+  max-width: 480px;
+  margin: auto;
+  padding: 2rem;
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 16px;
+  box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+  text-align: center;
+  margin-top: 40px;
+}
+
+/* Title */
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  background: linear-gradient(to right, #ffd700, #ffa500);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Grid Layout */
 .grid-box {
   display: flex;
   flex-direction: column;
@@ -28,40 +69,63 @@ body {
 }
 
 .slot {
-  font-size: 3rem;
+  font-size: 2.5rem;
   width: 70px;
   height: 70px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid white;
-  border-radius: 8px;
-  background-color: #111;
+  border: 2px solid #ffd700;
+  border-radius: 10px;
+  background: #111;
   transition: all 0.3s ease;
 }
 
-.slot.blur {
-  animation: blurSpin 0.2s linear infinite;
-  filter: blur(3px);
-  opacity: 0.6;
+/* Betting Interface */
+.bet-row {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 15px 0;
 }
 
-@keyframes blurSpin {
-  0% { transform: scale(1) rotate(0deg); }
-  50% { transform: scale(1.05) rotate(5deg); }
-  100% { transform: scale(1) rotate(-5deg); }
+.bet-row input {
+  width: 80px;
+  font-size: 1rem;
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: none;
+  text-align: center;
 }
 
 button {
-  font-size: 1.2rem;
-  padding: 10px 30px;
+  font-size: 1rem;
+  padding: 10px 25px;
   background-color: #ffd700;
+  color: black;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  font-weight: bold;
+  transition: 0.3s ease;
 }
 
 button:hover {
-  background-color: #ffe600;
+  background-color: #ffc800;
+}
+
+.balance {
+  font-size: 1.1rem;
+  margin: 10px 0;
+  color: #ffd700;
+}
+
+.error {
+  color: #ff4d4d;
+  font-size: 0.9rem;
+}
+
+p {
+  margin: 10px 0;
+  font-size: 1rem;
 }
