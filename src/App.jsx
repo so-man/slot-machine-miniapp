@@ -20,16 +20,27 @@ export default function App() {
   const [bet, setBet] = useState(10);
   const [error, setError] = useState('');
 
-  // ✅ Initialize Telegram + check daily bonus
   useEffect(() => {
-    init().then(async (tg) => {
-      const user = tg.initDataUnsafe?.user;
+    const setup = async () => {
+      let user = null;
+
+      try {
+        const tg = await init();
+        user = tg.initDataUnsafe?.user;
+      } catch (err) {
+        console.warn('[Telegram SDK fallback]:', err);
+      }
+
       if (!user) {
-        alert("Please open this in Telegram.");
-        return;
+        user = {
+          id: 'dev123',
+          first_name: 'Dev Tester',
+          username: 'devmode',
+        };
       }
 
       setTelegramUser(user);
+
       const userRef = doc(db, 'users', user.id.toString());
       const userSnap = await getDoc(userRef);
 
@@ -61,7 +72,9 @@ export default function App() {
       }
 
       setBalance(newBalance);
-    });
+    };
+
+    setup();
   }, []);
 
   const getRandomSymbol = () => symbols[Math.floor(Math.random() * symbols.length)];
@@ -105,7 +118,7 @@ export default function App() {
 
             setStreak(newStreak);
             setBalance(newBalance);
-            setMessage(win ? `🎉 You won ${payout} coins!` : '😢 Try again!');
+            setMessage(win ? `🎉 You won ${payout} coins!` : '😥 Try again!');
 
             const userRef = doc(db, 'users', telegramUser.id.toString());
             await updateDoc(userRef, {
@@ -137,7 +150,9 @@ export default function App() {
             <div className="container">
               <h1>🎰 Spinfinity</h1>
               {telegramUser && (
-                <div className="balance">Hi {telegramUser.first_name}, Balance: {balance} 🪙</div>
+                <div className="balance">
+                  Hi {telegramUser.first_name}, Balance: {balance} 🪙
+                </div>
               )}
               <div className="bet-row">
                 <input type="number" value={bet} min="1" onChange={(e) => setBet(e.target.value)} disabled={spinning} />

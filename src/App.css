@@ -1,4 +1,4 @@
-/* Background Layer */
+/* Background */
 body {
   margin: 0;
   padding: 0;
@@ -7,125 +7,114 @@ body {
   background: url('/casino-bg.png') no-repeat center center fixed;
   background-size: cover;
   overflow: hidden;
-  position: relative;
   height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-/* Animated Floating Icons */
-body::before {
-  content: '🪙💸💰🤑🪙💸🪙🪙🪙';
-  position: absolute;
-  top: -10%;
-  left: 0;
-  width: 100%;
-  height: 200%;
-  font-size: 2rem;
-  opacity: 0.05;
-  white-space: nowrap;
-  animation: cryptoRain 20s linear infinite;
-  pointer-events: none;
-}
-
-@keyframes cryptoRain {
-  0% { transform: translateY(-100%); }
-  100% { transform: translateY(100%); }
-}
-
-/* Container Styling */
+/* Centered Game Panel */
 .container {
-  position: relative;
-  z-index: 2;
-  max-width: 480px;
-  margin: auto;
-  padding: 2rem;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.85);
   border-radius: 16px;
-  box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
-  text-align: center;
-  margin-top: 40px;
+  padding: 2rem;
+  width: 320px;
+  min-height: 520px;
+  box-shadow: 0 0 25px rgba(255, 215, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 /* Title */
 h1 {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
   background: linear-gradient(to right, #ffd700, #ffa500);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-/* Grid Layout */
-.grid-box {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin: 30px 0;
+/* Balance */
+.balance {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  color: #ffdd57;
 }
 
-.row {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-}
-
-.slot {
-  font-size: 2.5rem;
-  width: 70px;
-  height: 70px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid #ffd700;
-  border-radius: 10px;
-  background: #111;
-  transition: all 0.3s ease;
-}
-
-/* Betting Interface */
+/* Betting Section */
 .bet-row {
   display: flex;
-  justify-content: center;
   gap: 10px;
-  margin: 15px 0;
+  margin-bottom: 20px;
 }
 
 .bet-row input {
-  width: 80px;
-  font-size: 1rem;
-  padding: 5px 10px;
-  border-radius: 5px;
-  border: none;
+  width: 60px;
   text-align: center;
+  border: none;
+  border-radius: 4px;
+  padding: 6px;
+  font-size: 1rem;
 }
 
 button {
-  font-size: 1rem;
-  padding: 10px 25px;
-  background-color: #ffd700;
+  background: #ffd700;
   color: black;
   border: none;
-  border-radius: 8px;
-  cursor: pointer;
+  border-radius: 6px;
+  font-size: 1rem;
+  padding: 6px 16px;
   font-weight: bold;
-  transition: 0.3s ease;
+  cursor: pointer;
 }
 
 button:hover {
   background-color: #ffc800;
 }
 
-.balance {
-  font-size: 1.1rem;
-  margin: 10px 0;
-  color: #ffd700;
+/* Grid */
+.grid-box {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.row {
+  display: flex;
+  gap: 6px;
+}
+
+.slot {
+  width: 60px;
+  height: 60px;
+  background: #111;
+  border: 2px solid #ffd700;
+  border-radius: 10px;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Messages */
+p {
+  margin: 0.5rem 0;
+  font-size: 0.95rem;
 }
 
 .error {
   color: #ff4d4d;
-  font-size: 0.9rem;
 }
 
-p {
-  margin: 10px 0;
-  font-size: 1rem;
+/* Leaderboard Link */
+a {
+  margin-top: 20px;
+  text-decoration: none;
+  color: #ffd700;
+  font-weight: bold;
+}
+
+a:hover {
+  text-decoration: underline;
 }
