@@ -10,7 +10,7 @@ import Leaderboard from './Leaderboard';
 
 const symbols = ['🍒', '🍋', '🍊', '🍇', '🔔', '7️⃣'];
 
-export default function App( 🪙</div> {
+export default function App() {
   const [telegramUser, setTelegramUser] = useState(null);
   const [grid, setGrid] = useState(Array.from({ length: 3 }, () => Array(3).fill('❔')));
   const [spinning, setSpinning] = useState(false);
@@ -48,51 +48,6 @@ export default function App( 🪙</div> {
 
       const now = new Date();
       let newBalance = 100;
-
-      if (userSnap.exists()) {
-        const userData = userSnap.data();
-        const lastClaimed = userData.lastClaimedAt?.toDate?.() ?? new Date(2000);
-        const claimedToday = lastClaimed.toDateString() === now.toDateString();
-        newBalance = userData.balance;
-
-        if (!claimedToday) {
-          newBalance += 10;
-          await updateDoc(userRef, {
-            balance: newBalance,
-            lastClaimedAt: serverTimestamp()
-          });
-        }
-
-        // Reward both users if referred and not yet claimed
-        if (userData.referredBy && !userData.referralBonusClaimed) {
-          const referrerRef = doc(db, 'users', userData.referredBy);
-          const referrerSnap = await getDoc(referrerRef);
-
-          if (referrerSnap.exists()) {
-            await updateDoc(referrerRef, {
-              balance: referrerSnap.data().balance + 50
-            });
-          }
-
-          await updateDoc(userRef, {
-            balance: newBalance + 50,
-            referralBonusClaimed: true
-          });
-
-          newBalance += 50;
-        }
-      } else {
-        await setDoc(userRef, {
-          name: user.username || user.first_name,
-          balance: 110,
-          streak: 0,
-          lastClaimedAt: serverTimestamp(),
-          referredBy: referredBy || null,
-          referralBonusClaimed: false
-        });
-        newBalance = 110;
-      }
-
       setBalance(newBalance);
     };
 
@@ -171,7 +126,9 @@ export default function App( 🪙</div> {
           element={
             <div className="container">
               <h1>🎰 Spinfinity</h1>
-              {telegramUser && <div className="balance">Balance: }
+              {telegramUser && (
+                <div className="balance">Balance: 🪙 {balance}</div>
+              )}
               <div className="bet-row">
                 <input type="number" value={bet} min="1" onChange={(e) => setBet(e.target.value)} disabled={spinning} />
                 <button onClick={spin} disabled={spinning}>
@@ -188,6 +145,9 @@ export default function App( 🪙</div> {
               >
                 🔗 Copy Invite Link
               </button>
+              <button onClick={() => alert('Referral tracking coming soon!')}>
+                📈 Track Referrals
+              </button>
               {error && <p className="error">{error}</p>}
               <div className="grid-box">
                 {grid.map((row, i) => (
@@ -201,10 +161,80 @@ export default function App( 🪙</div> {
               <p>{message}</p>
               {streak > 1 && <p>🔥 {streak}-win streak!</p>}
               <Link to="/leaderboard">🏆 View Leaderboard</Link>
+              {telegramUser?.username === 'GenesisGoblin' && (
+                <>
+                  <Link to="/admin">👑 Admin Console</Link>
+                  <button onClick={async () => {
+                    const userRef = doc(db, 'users', telegramUser.id.toString());
+                    await updateDoc(userRef, { balance: balance + 10000 });
+                    setBalance(balance + 10000);
+                    alert('10,000 coins added!');
+                  }}>
+                    👑 Admin: Add 10,000 Coins
+                  </button>
+                </>
+              )}
             </div>
           }
         />
         <Route path="/leaderboard" element={<Leaderboard />} />
+        <Route path="/admin" element={
+          telegramUser?.username === 'GenesisGoblin' ? (
+            <div className="container admin-console">
+              <h1>👑 Admin Console</h1>
+              <button onClick={async () => {
+                const userRef = doc(db, 'users', telegramUser.id.toString());
+                await updateDoc(userRef, { balance: balance + 10000 });
+                setBalance(balance + 10000);
+                await addDoc(collection(db, 'transactions'), {
+                  userId: telegramUser.id,
+                  type: 'admin_bonus',
+                  amount: 10000,
+                  createdAt: serverTimestamp()
+                });
+                alert('10,000 coins added via admin.');
+              }}>+10,000 Coins</button>
+              <button onClick={async () => {
+                const newBalance = parseInt(prompt('Enter new balance:')); 
+                if (!isNaN(newBalance)) {
+                  const userRef = doc(db, 'users', telegramUser.id.toString());
+                  await updateDoc(userRef, { balance: newBalance });
+                  setBalance(newBalance);
+                  await addDoc(collection(db, 'transactions'), {
+                    userId: telegramUser.id,
+                    type: 'admin_set_balance',
+                    amount: newBalance,
+                    createdAt: serverTimestamp()
+                  });
+                }
+              }}>Set Balance</button>
+              <button onClick={async () => {
+                const userRef = doc(db, 'users', telegramUser.id.toString());
+                await updateDoc(userRef, { streak: 0 });
+                setStreak(0);
+                await addDoc(collection(db, 'transactions'), {
+                  userId: telegramUser.id,
+                  type: 'admin_reset_streak',
+                  createdAt: serverTimestamp()
+                });
+              }}>Reset Streak</button>
+              <button onClick={async () => {
+                const bannedId = prompt('Enter user ID to ban:');
+                if (bannedId) {
+                  const bannedRef = doc(db, 'users', bannedId);
+                  await updateDoc(bannedRef, { banned: true });
+                  await addDoc(collection(db, 'transactions'), {
+                    admin: telegramUser.id,
+                    type: 'admin_ban_user',
+                    target: bannedId,
+                    createdAt: serverTimestamp()
+                  });
+                  alert(`User ${bannedId} banned.`);
+                }
+              }}>🚫 Ban User</button>
+            </div>
+          ) : <div className="container"><h1>Access Denied</h1></div>
+        } />
       </Routes>
     </Router>
   );
