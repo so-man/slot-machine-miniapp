@@ -23,6 +23,8 @@ export default function App() {
   useEffect(() => {
     const setup = async () => {
       let user = null;
+      const urlParams = new URLSearchParams(window.location.search);
+      const referredBy = urlParams.get('start');
 
       try {
         const tg = await init();
@@ -51,7 +53,6 @@ export default function App() {
         const userData = userSnap.data();
         const lastClaimed = userData.lastClaimedAt?.toDate?.() ?? new Date(2000);
         const claimedToday = lastClaimed.toDateString() === now.toDateString();
-
         newBalance = userData.balance;
 
         if (!claimedToday) {
@@ -61,12 +62,33 @@ export default function App() {
             lastClaimedAt: serverTimestamp()
           });
         }
+
+        // Reward both users if referred and not yet claimed
+        if (userData.referredBy && !userData.referralBonusClaimed) {
+          const referrerRef = doc(db, 'users', userData.referredBy);
+          const referrerSnap = await getDoc(referrerRef);
+
+          if (referrerSnap.exists()) {
+            await updateDoc(referrerRef, {
+              balance: referrerSnap.data().balance + 50
+            });
+          }
+
+          await updateDoc(userRef, {
+            balance: newBalance + 50,
+            referralBonusClaimed: true
+          });
+
+          newBalance += 50;
+        }
       } else {
         await setDoc(userRef, {
           name: user.username || user.first_name,
           balance: 110,
           streak: 0,
-          lastClaimedAt: serverTimestamp()
+          lastClaimedAt: serverTimestamp(),
+          referredBy: referredBy || null,
+          referralBonusClaimed: false
         });
         newBalance = 110;
       }
@@ -160,6 +182,16 @@ export default function App() {
                   {spinning ? 'Spinning...' : 'Spin'}
                 </button>
               </div>
+              <p>🎁 Invite a friend to earn 50 bonus coins!</p>
+              <button
+                onClick={() =>
+                  navigator.clipboard.writeText(
+                    `https://t.me/Spinfinity_bot?start=${telegramUser?.id}`
+                  ).then(() => alert('Referral link copied!'))
+                }
+              >
+                🔗 Copy Invite Link
+              </button>
               {error && <p className="error">{error}</p>}
               <div className="grid-box">
                 {grid.map((row, i) => (

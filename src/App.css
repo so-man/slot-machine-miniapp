@@ -13,12 +13,12 @@ body {
   align-items: center;
 }
 
-/* Centered Game Panel */
+/* Main Panel */
 .container {
   background: rgba(0, 0, 0, 0.85);
   border-radius: 16px;
   padding: 2rem;
-  width: 320px;
+  width: 340px;
   min-height: 520px;
   box-shadow: 0 0 25px rgba(255, 215, 0, 0.4);
   display: flex;
@@ -42,11 +42,11 @@ h1 {
   color: #ffdd57;
 }
 
-/* Betting Section */
+/* Bet Input + Spin Button */
 .bet-row {
   display: flex;
   gap: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 .bet-row input {
@@ -67,17 +67,35 @@ button {
   padding: 6px 16px;
   font-weight: bold;
   cursor: pointer;
+  transition: 0.2s ease;
 }
 
 button:hover {
   background-color: #ffc800;
 }
 
-/* Grid */
+/* Referral Section */
+p {
+  font-size: 0.95rem;
+  margin: 8px 0;
+  text-align: center;
+}
+
+button:disabled {
+  background-color: #999;
+  cursor: not-allowed;
+}
+
+.error {
+  color: #ff4d4d;
+}
+
+/* Slot Grid */
 .grid-box {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  margin: 10px 0;
 }
 
 .row {
@@ -97,19 +115,9 @@ button:hover {
   justify-content: center;
 }
 
-/* Messages */
-p {
-  margin: 0.5rem 0;
-  font-size: 0.95rem;
-}
-
-.error {
-  color: #ff4d4d;
-}
-
-/* Leaderboard Link */
+/* Link to Leaderboard */
 a {
-  margin-top: 20px;
+  margin-top: 1rem;
   text-decoration: none;
   color: #ffd700;
   font-weight: bold;
