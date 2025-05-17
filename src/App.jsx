@@ -8,14 +8,14 @@ import { init } from '@telegram-apps/sdk';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 
 const ADMIN_ID = 890274218;
-const symbols = ['🍒', '🍋', '🍊', '🍇', '🔔', '7️⃣'];
+const symbols = ['🍒', '🍋', '🍊', '🍇', '🔔', '7⃣'];
 
 function TopNav({ isAdmin }) {
   const location = useLocation();
   return (
     <div className="top-nav">
       <Link to="/" className={location.pathname === '/' ? 'active' : ''}>🏠 Home</Link>
-      <Link to="/referrals" className={location.pathname === '/referrals' ? 'active' : ''}>📈 Referrals</Link>
+      <Link to="/referrals" className={location.pathname === '/referrals' ? 'active' : ''}>📊 Referrals</Link>
       <Link to="/battles" className={location.pathname === '/battles' ? 'active' : ''}>⚔️ Battles</Link>
       {isAdmin && <Link to="/admin" className={location.pathname === '/admin' ? 'active' : ''}>👑 Admin</Link>}
     </div>
@@ -37,7 +37,7 @@ function Referrals({ telegramUser }) {
 
   return (
     <div className="container">
-      <h1>📈 Referral Activity</h1>
+      <h1>📊 Referral Activity</h1>
       {referrals.length === 0 ? <p>No referrals yet.</p> : (
         <ul>
           {referrals.map((r, i) => (
@@ -79,6 +79,16 @@ function AdminPanel() {
       <button onClick={updateBalance}>💰 Set Balance</button>
       <button onClick={resetStreak}>♻️ Reset Streak</button>
       <button onClick={banUser}>🚫 Ban User</button>
+    </div>
+  );
+}
+
+function Home({ telegramUser, balance, setBalance, grid, setGrid, streak, setStreak }) {
+  return (
+    <div className="container">
+      <h1>🎰 Spinfinity</h1>
+      <div className="balance">Balance: 🪙 {balance}</div>
+      {/* You can expand this with actual game logic */}
     </div>
   );
 }
