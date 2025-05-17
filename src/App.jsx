@@ -5,54 +5,29 @@ import {
   doc, setDoc, updateDoc, getDoc, collection, addDoc, serverTimestamp
 } from 'firebase/firestore';
 import { init } from '@telegram-apps/sdk';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import Leaderboard from './Leaderboard';
+import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 
 const symbols = ['🍒', '🍋', '🍊', '🍇', '🔔', '7️⃣'];
 
-export default function App() {
-  const [telegramUser, setTelegramUser] = useState(null);
-  const [grid, setGrid] = useState(Array.from({ length: 3 }, () => Array(3).fill('❔')));
+function TopNav({ isAdmin }) {
+  const location = useLocation();
+  return (
+    <div className="top-nav">
+      <Link to="/" className={location.pathname === '/' ? 'active' : ''}>🏠 Home</Link>
+      <Link to="/referrals" className={location.pathname === '/referrals' ? 'active' : ''}>📈 Referrals</Link>
+      <Link to="/battles" className={location.pathname === '/battles' ? 'active' : ''}>⚔️ Battles</Link>
+      {isAdmin && (
+        <Link to="/admin" className={location.pathname === '/admin' ? 'active' : ''}>👑 Admin</Link>
+      )}
+    </div>
+  );
+}
+
+function Home({ telegramUser, balance, setBalance, grid, setGrid, streak, setStreak }) {
   const [spinning, setSpinning] = useState(false);
   const [message, setMessage] = useState('');
-  const [balance, setBalance] = useState(0);
-  const [streak, setStreak] = useState(0);
   const [bet, setBet] = useState(10);
   const [error, setError] = useState('');
-
-  useEffect(() => {
-    const setup = async () => {
-      let user = null;
-      const urlParams = new URLSearchParams(window.location.search);
-      const referredBy = urlParams.get('start');
-
-      try {
-        const tg = await init();
-        user = tg.initDataUnsafe?.user;
-      } catch (err) {
-        console.warn('[Telegram SDK fallback]:', err);
-      }
-
-      if (!user) {
-        user = {
-          id: 'dev123',
-          first_name: 'Dev Tester',
-          username: 'devmode',
-        };
-      }
-
-      setTelegramUser(user);
-
-      const userRef = doc(db, 'users', user.id.toString());
-      const userSnap = await getDoc(userRef);
-
-      const now = new Date();
-      let newBalance = 100;
-      setBalance(newBalance);
-    };
-
-    setup();
-  }, []);
 
   const getRandomSymbol = () => symbols[Math.floor(Math.random() * symbols.length)];
 
@@ -119,122 +94,121 @@ export default function App() {
   };
 
   return (
-    <Router>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <div className="container">
-              <h1>🎰 Spinfinity</h1>
-              {telegramUser && (
-                <div className="balance">Balance: 🪙 {balance}</div>
-              )}
-              <div className="bet-row">
-                <input type="number" value={bet} min="1" onChange={(e) => setBet(e.target.value)} disabled={spinning} />
-                <button onClick={spin} disabled={spinning}>
-                  {spinning ? 'Spinning...' : 'Spin'}
-                </button>
-              </div>
-              <p>🎁 Invite a friend to earn 50 bonus coins!</p>
-              <button
-                onClick={() =>
-                  navigator.clipboard.writeText(
-                    `https://t.me/Spinfinity_bot?start=${telegramUser?.id}`
-                  ).then(() => alert('Referral link copied!'))
-                }
-              >
-                🔗 Copy Invite Link
-              </button>
-              <button onClick={() => alert('Referral tracking coming soon!')}>
-                📈 Track Referrals
-              </button>
-              {error && <p className="error">{error}</p>}
-              <div className="grid-box">
-                {grid.map((row, i) => (
-                  <div className="row" key={i}>
-                    {row.map((symbol, j) => (
-                      <div key={j} className="slot">{symbol}</div>
-                    ))}
-                  </div>
-                ))}
-              </div>
-              <p>{message}</p>
-              {streak > 1 && <p>🔥 {streak}-win streak!</p>}
-              <Link to="/leaderboard">🏆 View Leaderboard</Link>
-              {telegramUser?.username === 'GenesisGoblin' && (
-                <>
-                  <Link to="/admin">👑 Admin Console</Link>
-                  <button onClick={async () => {
-                    const userRef = doc(db, 'users', telegramUser.id.toString());
-                    await updateDoc(userRef, { balance: balance + 10000 });
-                    setBalance(balance + 10000);
-                    alert('10,000 coins added!');
-                  }}>
-                    👑 Admin: Add 10,000 Coins
-                  </button>
-                </>
-              )}
-            </div>
+    <div className="container">
+      <h1>🎰 Spinfinity</h1>
+      <div className="balance">Balance: 🪙 {balance}</div>
+      <div className="bet-row">
+        <input type="number" value={bet} min="1" onChange={(e) => setBet(e.target.value)} disabled={spinning} />
+        <button onClick={spin} disabled={spinning}>
+          {spinning ? 'Spinning...' : 'Spin'}
+        </button>
+      </div>
+      <p>🎁 Invite a friend to earn 50 bonus coins!</p>
+      <div className="invite-row">
+        <button
+          onClick={() =>
+            navigator.clipboard.writeText(`https://t.me/Spinfinity_bot?start=${telegramUser?.id}`)
+              .then(() => alert('Referral link copied!'))
           }
-        />
-        <Route path="/leaderboard" element={<Leaderboard />} />
-        <Route path="/admin" element={
-          telegramUser?.username === 'GenesisGoblin' ? (
-            <div className="container admin-console">
-              <h1>👑 Admin Console</h1>
-              <button onClick={async () => {
-                const userRef = doc(db, 'users', telegramUser.id.toString());
-                await updateDoc(userRef, { balance: balance + 10000 });
-                setBalance(balance + 10000);
-                await addDoc(collection(db, 'transactions'), {
-                  userId: telegramUser.id,
-                  type: 'admin_bonus',
-                  amount: 10000,
-                  createdAt: serverTimestamp()
-                });
-                alert('10,000 coins added via admin.');
-              }}>+10,000 Coins</button>
-              <button onClick={async () => {
-                const newBalance = parseInt(prompt('Enter new balance:')); 
-                if (!isNaN(newBalance)) {
-                  const userRef = doc(db, 'users', telegramUser.id.toString());
-                  await updateDoc(userRef, { balance: newBalance });
-                  setBalance(newBalance);
-                  await addDoc(collection(db, 'transactions'), {
-                    userId: telegramUser.id,
-                    type: 'admin_set_balance',
-                    amount: newBalance,
-                    createdAt: serverTimestamp()
-                  });
-                }
-              }}>Set Balance</button>
-              <button onClick={async () => {
-                const userRef = doc(db, 'users', telegramUser.id.toString());
-                await updateDoc(userRef, { streak: 0 });
-                setStreak(0);
-                await addDoc(collection(db, 'transactions'), {
-                  userId: telegramUser.id,
-                  type: 'admin_reset_streak',
-                  createdAt: serverTimestamp()
-                });
-              }}>Reset Streak</button>
-              <button onClick={async () => {
-                const bannedId = prompt('Enter user ID to ban:');
-                if (bannedId) {
-                  const bannedRef = doc(db, 'users', bannedId);
-                  await updateDoc(bannedRef, { banned: true });
-                  await addDoc(collection(db, 'transactions'), {
-                    admin: telegramUser.id,
-                    type: 'admin_ban_user',
-                    target: bannedId,
-                    createdAt: serverTimestamp()
-                  });
-                  alert(`User ${bannedId} banned.`);
-                }
-              }}>🚫 Ban User</button>
-            </div>
-          ) : <div className="container"><h1>Access Denied</h1></div>
-        } />
+        >🔗 Copy Invite Link</button>
+        <Link to="/referrals" className="btn">📈 Track Referrals</Link>
+      </div>
+      {error && <p className="error">{error}</p>}
+      <div className="grid-box">
+        {grid.map((row, i) => (
+          <div className="row" key={i}>
+            {row.map((symbol, j) => (
+              <div key={j} className="slot">{symbol}</div>
+            ))}
+          </div>
+        ))}
+      </div>
+      <p>{message}</p>
+      {streak > 1 && <p>🔥 {streak}-win streak!</p>}
+    </div>
+  );
+}
+
+function Referrals() {
+  return (
+    <div className="container">
+      <h1>📈 Referral Activity</h1>
+      <p>This page will show who joined using your link and bonus status.</p>
+    </div>
+  );
+}
+
+function Battles() {
+  return (
+    <div className="container">
+      <h1>⚔️ Spin Battle</h1>
+      <p>Tag a friend. If they spin within 5 minutes, you both earn 50 coins!</p>
+      <p>(Coming soon: invite tracking and real-time battles!)</p>
+    </div>
+  );
+}
+
+function AdminPanel() {
+  return (
+    <div className="container">
+      <h1>👑 Admin Console</h1>
+      <p>All admin tools coming back here soon.</p>
+    </div>
+  );
+}
+
+export default function App() {
+  const [telegramUser, setTelegramUser] = useState(null);
+  const [grid, setGrid] = useState(Array.from({ length: 3 }, () => Array(3).fill('❔')));
+  const [balance, setBalance] = useState(0);
+  const [streak, setStreak] = useState(0);
+
+  useEffect(() => {
+    const setup = async () => {
+      let user = null;
+      try {
+        const tg = await init();
+        user = tg.initDataUnsafe?.user;
+      } catch (err) {
+        console.warn('[Telegram SDK fallback]:', err);
+      }
+
+      if (!user) {
+        user = {
+          id: 'dev123',
+          first_name: 'Dev Tester',
+          username: 'devmode'
+        };
+      }
+
+      setTelegramUser(user);
+      const userRef = doc(db, 'users', user.id.toString());
+      const userSnap = await getDoc(userRef);
+      if (userSnap.exists()) {
+        setBalance(userSnap.data().balance || 100);
+        setStreak(userSnap.data().streak || 0);
+      } else {
+        await setDoc(userRef, {
+          balance: 100,
+          streak: 0,
+          createdAt: serverTimestamp()
+        });
+        setBalance(100);
+        setStreak(0);
+      }
+    };
+    setup();
+  }, []);
+
+  return (
+    <Router>
+      {telegramUser && <TopNav isAdmin={telegramUser?.username === 'GenesisGoblin'} />}
+      <Routes>
+        <Route path="/" element={<Home telegramUser={telegramUser} balance={balance} setBalance={setBalance} grid={grid} setGrid={setGrid} streak={streak} setStreak={setStreak} />} />
+        <Route path="/referrals" element={<Referrals />} />
+        <Route path="/battles" element={<Battles />} />
+        <Route path="/admin" element={<AdminPanel />} />
+        <Route path="/leaderboard" element={<div className="container"><h1>🏆 Leaderboard</h1></div>} />
       </Routes>
     </Router>
   );

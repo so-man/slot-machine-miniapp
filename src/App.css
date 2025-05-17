@@ -1,116 +1,138 @@
-/* Layout */
+/* App.css */
+
 body {
   margin: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background-color: #121212;
-  color: white;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #111;
+  color: #fff;
 }
 
 .container {
-  padding: 20px;
-  max-width: 400px;
+  max-width: 500px;
   margin: auto;
-  background: rgba(0, 0, 0, 0.7);
+  padding: 1rem;
+  background-color: rgba(0, 0, 0, 0.7);
   border-radius: 12px;
-  box-shadow: 0 0 16px rgba(255, 215, 0, 0.4);
-  text-align: center;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
 }
 
 h1 {
-  font-size: 1.8rem;
-  margin-bottom: 1rem;
-  background: linear-gradient(to right, #ffd700, #ffa500);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  text-align: center;
+  color: gold;
+}
+
+.top-nav {
+  display: flex;
+  justify-content: space-around;
+  background-color: #1a1a1a;
+  padding: 0.75rem;
+  border-bottom: 2px solid gold;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.top-nav a {
+  color: #ccc;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  transition: background 0.3s, color 0.3s;
+}
+
+.top-nav a.active,
+.top-nav a:hover {
+  background-color: gold;
+  color: #000;
 }
 
 .balance {
-  font-size: 1.2rem;
+  font-weight: bold;
   margin-bottom: 1rem;
-  color: #ffdd57;
 }
 
 .bet-row {
   display: flex;
+  gap: 0.5rem;
   justify-content: center;
-  gap: 8px;
-  margin-bottom: 16px;
+  margin-bottom: 1rem;
 }
 
 .bet-row input {
   width: 60px;
   text-align: center;
-  padding: 6px;
   border-radius: 6px;
-  border: 1px solid #ccc;
+  padding: 0.25rem;
+  border: none;
 }
 
-button, .btn {
-  background: #facc15;
-  color: black;
-  border: 1px solid #d4a700;
+.bet-row button {
+  padding: 0.4rem 1rem;
+  background-color: gold;
+  border: none;
   border-radius: 6px;
-  font-size: 1rem;
-  padding: 6px 16px;
-  font-weight: bold;
   cursor: pointer;
-  text-decoration: none;
-  display: inline-block;
-  min-width: 120px;
-  transition: background 0.2s ease;
-}
-
-button:hover, .btn:hover {
-  background-color: #eab308;
+  font-weight: bold;
+  color: #000;
 }
 
 .invite-row {
   display: flex;
+  gap: 0.5rem;
   justify-content: center;
-  gap: 10px;
-  margin: 10px 0;
-  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.invite-row button,
+.invite-row .btn {
+  background-color: #f1c40f;
+  color: #000;
+  border: 1px solid #ccc;
+  padding: 0.4rem 0.75rem;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .grid-box {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin: 20px 0;
+  align-items: center;
+  margin: 1rem 0;
 }
 
 .row {
   display: flex;
-  gap: 6px;
   justify-content: center;
 }
 
 .slot {
   width: 60px;
   height: 60px;
-  background: #1f1f1f;
-  border: 2px solid #ffd700;
-  border-radius: 10px;
-  font-size: 1.5rem;
+  background-color: #222;
+  color: #fff;
+  font-size: 2rem;
+  border: 2px solid gold;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin: 0.3rem;
 }
 
 .error {
-  color: #ff4d4d;
-  font-weight: bold;
-  margin-top: 10px;
+  color: red;
+  text-align: center;
+}
+
+p {
+  text-align: center;
 }
 
 a {
-  color: #ffd700;
   text-decoration: none;
-  font-weight: bold;
-  display: block;
-  margin-top: 10px;
-}
-
-a:hover {
-  text-decoration: underline;
 }
