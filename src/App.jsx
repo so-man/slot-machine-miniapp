@@ -3,13 +3,12 @@ import { useState, useEffect } from 'react';
 import './App.css';
 import { db } from './firebase';
 import {
-  doc, setDoc, updateDoc, getDoc, collection, addDoc, serverTimestamp, query, where, getDocs
+  doc, setDoc, updateDoc, getDoc, collection, serverTimestamp, query, where, getDocs
 } from 'firebase/firestore';
 import { init } from '@telegram-apps/sdk';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 
 const ADMIN_ID = 890274218;
-const symbols = ['🍒', '🍋', '🍊', '🍇', '🔔', '7⃣'];
 
 function TopNav({ isAdmin }) {
   const location = useLocation();
@@ -84,16 +83,6 @@ function AdminPanel() {
   );
 }
 
-function Home({ telegramUser, balance, setBalance, grid, setGrid, streak, setStreak }) {
-  return (
-    <div className="container">
-      <h1>🎰 Spinfinity</h1>
-      <div className="balance">Balance: 🪙 {balance}</div>
-      {/* You can expand this with actual game logic */}
-    </div>
-  );
-}
-
 export default function App() {
   const [telegramUser, setTelegramUser] = useState(null);
   const [grid, setGrid] = useState(Array.from({ length: 3 }, () => Array(3).fill('❔')));
@@ -109,6 +98,7 @@ export default function App() {
       } catch (err) {
         console.warn('[Telegram SDK fallback]:', err);
       }
+
       if (!user) {
         user = { id: 'dev123', first_name: 'Dev Tester', username: 'devmode' };
       }
@@ -160,10 +150,24 @@ export default function App() {
     <Router>
       {telegramUser && <TopNav isAdmin={telegramUser?.id === ADMIN_ID} />}
       <Routes>
-        <Route path="/" element={<Home telegramUser={telegramUser} balance={balance} setBalance={setBalance} grid={grid} setGrid={setGrid} streak={streak} setStreak={setStreak} />} />
+        <Route path="/" element={
+          <Home
+            telegramUser={telegramUser}
+            balance={balance}
+            setBalance={setBalance}
+            grid={grid}
+            setGrid={setGrid}
+            streak={streak}
+            setStreak={setStreak}
+          />
+        } />
         <Route path="/referrals" element={<Referrals telegramUser={telegramUser} />} />
         <Route path="/battles" element={<div className="container"><h1>⚔️ Spin Battle</h1><p>Tag a friend. If they spin within 5 minutes, you both earn 50 coins!</p></div>} />
-        <Route path="/admin" element={telegramUser?.id === ADMIN_ID ? <AdminPanel /> : <div className="container"><h1>Access Denied</h1></div>} />
+        <Route path="/admin" element={
+          telegramUser?.id === ADMIN_ID
+            ? <AdminPanel />
+            : <div className="container"><h1>Access Denied</h1></div>
+        } />
       </Routes>
     </Router>
   );

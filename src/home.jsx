@@ -80,13 +80,22 @@ export default function Home({ telegramUser, balance, setBalance, grid, setGrid,
     <div className="container">
       <h1>🎰 Spinfinity</h1>
       <div className="balance">Balance: 🪙 {balance}</div>
+
       <div className="bet-row">
-        <input type="number" value={bet} min="1" onChange={(e) => setBet(e.target.value)} disabled={spinning} />
+        <input
+          type="number"
+          value={bet}
+          min="1"
+          onChange={(e) => setBet(e.target.value)}
+          disabled={spinning}
+        />
         <button onClick={spin} disabled={spinning}>
           {spinning ? 'Spinning...' : 'Spin'}
         </button>
       </div>
+
       <p>🎁 Invite a friend to earn 50 bonus coins!</p>
+
       <div className="invite-row">
         <button
           onClick={() =>
@@ -101,7 +110,9 @@ export default function Home({ telegramUser, balance, setBalance, grid, setGrid,
           📈 Track Referrals
         </button>
       </div>
+
       {error && <p className="error">{error}</p>}
+
       <div className="grid-box">
         {grid.map((row, i) => (
           <div className="row" key={i}>
@@ -111,6 +122,7 @@ export default function Home({ telegramUser, balance, setBalance, grid, setGrid,
           </div>
         ))}
       </div>
+
       <p>{message}</p>
       {streak > 1 && <p>🔥 {streak}-win streak!</p>}
     </div>
