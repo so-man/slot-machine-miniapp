@@ -93,11 +93,23 @@ export default function App() {
     const setup = async () => {
       let user = null;
       try {
-        const tg = await init();
-        user = tg.initDataUnsafe?.user;
-      } catch (err) {
-        console.warn('[Telegram SDK fallback]:', err);
-      }
+   try {
+  const tg = await init();
+  const tgUser = tg.initDataUnsafe?.user;
+  console.log('✅ Telegram initDataUnsafe.user:', tgUser);
+
+  if (!tgUser) {
+    console.error('❌ No user returned from initDataUnsafe!');
+  }
+
+  user = tgUser;
+} catch (err) {
+  console.warn('[Telegram SDK fallback]:', err);
+}
+
+} catch (err) {
+  console.warn('[Telegram SDK fallback]:', err);
+}
 
       if (!user) {
         user = { id: 'dev123', first_name: 'Dev Tester', username: 'devmode' };
