@@ -1,4 +1,4 @@
-import Home from './Home';
+import Home from './Home.jsx';
 import { useState, useEffect } from 'react';
 import './App.css';
 import { db } from './firebase';
